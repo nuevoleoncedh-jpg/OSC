@@ -26,7 +26,7 @@ def cargar_datos():
 
 df = cargar_datos()
 
-# 3. Estilos CSS
+# 3. Estilos CSS (Actualizados con más color)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
@@ -70,62 +70,77 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* --- ESTILO PARA TARJETAS COMPACTAS --- */
+    /* --- ESTILO PARA TARJETAS CON MÁS COLOR --- */
     .card-osc {
-        background: white;
-        padding: 20px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        padding: 22px;
         border-radius: 20px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.08);
         margin-bottom: 20px;
-        height: 460px; /* Ajustado para dar espacio al texto grande de objeto y servicios */
+        height: 480px;
         display: flex;
         flex-direction: column;
-        transition: transform 0.3s ease;
-        border: 1px solid #f1f5f9;
+        transition: all 0.3s ease;
+        border: 1px solid #e2e8f0;
+        border-left: 6px solid #10b981; /* Borde izquierdo verde vibrante */
     }
-    .card-osc:hover { transform: translateY(-5px); }
+    .card-osc:hover { 
+        transform: translateY(-6px); 
+        box-shadow: 0 15px 30px rgba(16, 185, 129, 0.15);
+        border-color: #cbd5e1;
+        border-left-color: #059669;
+    }
 
     .tag-premium {
-        background-color: #ecfdf5;
-        color: #065f46;
-        padding: 4px 10px;
+        background-color: #d1fae5;
+        color: #047857;
+        padding: 5px 12px;
         border-radius: 100px;
         font-weight: 700;
-        font-size: 10px;
+        font-size: 11px;
         text-transform: uppercase;
         border: 1px solid #a7f3d0;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         width: fit-content;
     }
 
     .card-title {
-        font-size: 1.15rem;
+        font-size: 1.2rem;
         font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 8px;
+        color: #0f172a;
+        margin-bottom: 10px;
         height: 48px;
         line-height: 1.2;
         overflow: hidden;
     }
 
-    /* Estilo para Objeto */
+    /* Estilo para Objeto con bloque de color */
     .card-desc {
         font-size: 0.98rem;
-        color: #334155;
-        line-height: 1.4;
-        margin-bottom: 8px;
+        color: #1e293b;
+        line-height: 1.45;
+        margin-bottom: 10px;
+        background-color: #f0fdf4;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border-left: 3px solid #34d399;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
 
-    /* Estilo para Servicios (Mismo tamaño que Objeto) */
+    /* Estilo para Servicios con bloque de color */
     .card-services {
         font-size: 0.98rem;
-        color: #334155;
-        line-height: 1.4;
+        color: #1e293b;
+        line-height: 1.45;
         margin-bottom: 12px;
+        background-color: #f0f9ff;
+        padding: 8px 12px;
+        border-radius: 100px;
+        border-radius: 10px;
+        border-left: 3px solid #38bdf8;
         display: -webkit-box;
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
@@ -134,10 +149,10 @@ st.markdown("""
 
     .card-info {
         font-size: 0.85rem;
-        border-top: 1px solid #f1f5f9;
+        border-top: 1px dashed #cbd5e1;
         padding-top: 10px;
         color: #475569;
-        line-height: 1.4;
+        line-height: 1.5;
         margin-top: auto;
     }
 
@@ -206,7 +221,7 @@ if not df.empty:
     if 'letra' in df_f.columns and letra_sel != "Todas":
         df_f = df_f[df_f['letra'] == letra_sel]
 
-    # --- 7. LISTADO DE TARJETAS (COMPACTAS) ---
+    # --- 7. LISTADO DE TARJETAS ---
     st.write(f"Mostrando **{len(df_f)}** resultados")
     
     for i in range(0, len(df_f), 3):
@@ -225,10 +240,10 @@ if not df.empty:
                         <div class="tag-premium">{row.get('tag', 'General')}</div>
                         <div class="card-title">{row.get('nombre', 'S/N')}</div>
                         <div class="card-desc">
-                            <b>Objeto:</b> {objeto_txt[:180]}
+                            🎯 <b style="color: #0f766e;">Objeto:</b> {objeto_txt[:180]}
                         </div>
                         <div class="card-services">
-                            🤝 <b>Servicios:</b> {servicios_txt[:180]}
+                            🤝 <b style="color: #0369a1;">Servicios:</b> {servicios_txt[:180]}
                         </div>
                         <div class="card-info">
                             📍 <b>Dirección:</b> {ubicacion}<br>
