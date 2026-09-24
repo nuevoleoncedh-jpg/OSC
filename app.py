@@ -26,7 +26,7 @@ def cargar_datos():
 
 df = cargar_datos()
 
-# 3. Estilos CSS (Actualizados con más color)
+# 3. Estilos CSS (Actualizados con dirección y teléfono más grandes)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
@@ -70,19 +70,19 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* --- ESTILO PARA TARJETAS CON MÁS COLOR --- */
+    /* --- ESTILO PARA TARJETAS --- */
     .card-osc {
         background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
         padding: 22px;
         border-radius: 20px;
         box-shadow: 0 10px 25px rgba(16, 185, 129, 0.08);
         margin-bottom: 20px;
-        height: 480px;
+        height: 500px; /* Ajustado para dar espacio al texto más grande */
         display: flex;
         flex-direction: column;
         transition: all 0.3s ease;
         border: 1px solid #e2e8f0;
-        border-left: 6px solid #10b981; /* Borde izquierdo verde vibrante */
+        border-left: 6px solid #10b981;
     }
     .card-osc:hover { 
         transform: translateY(-6px); 
@@ -114,12 +114,12 @@ st.markdown("""
         overflow: hidden;
     }
 
-    /* Estilo para Objeto con bloque de color */
+    /* Estilo para Objeto */
     .card-desc {
         font-size: 0.98rem;
         color: #1e293b;
         line-height: 1.45;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         background-color: #f0fdf4;
         padding: 8px 12px;
         border-radius: 10px;
@@ -130,29 +130,31 @@ st.markdown("""
         overflow: hidden;
     }
 
-    /* Estilo para Servicios con bloque de color */
+    /* Estilo para Servicios */
     .card-services {
         font-size: 0.98rem;
         color: #1e293b;
         line-height: 1.45;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         background-color: #f0f9ff;
         padding: 8px 12px;
-        border-radius: 100px;
         border-radius: 10px;
         border-left: 3px solid #38bdf8;
         display: -webkit-box;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
 
+    /* Estilo para Dirección y Teléfono (Mismo tamaño de fuente) */
     .card-info {
-        font-size: 0.85rem;
-        border-top: 1px dashed #cbd5e1;
-        padding-top: 10px;
-        color: #475569;
-        line-height: 1.5;
+        font-size: 0.98rem; /* Aumentado a 0.98rem */
+        color: #1e293b;
+        line-height: 1.45;
+        background-color: #faf5ff;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border-left: 3px solid #a855f7;
         margin-top: auto;
     }
 
@@ -240,14 +242,14 @@ if not df.empty:
                         <div class="tag-premium">{row.get('tag', 'General')}</div>
                         <div class="card-title">{row.get('nombre', 'S/N')}</div>
                         <div class="card-desc">
-                            🎯 <b style="color: #0f766e;">Objeto:</b> {objeto_txt[:180]}
+                            🎯 <b style="color: #0f766e;">Objeto:</b> {objeto_txt[:160]}
                         </div>
                         <div class="card-services">
-                            🤝 <b style="color: #0369a1;">Servicios:</b> {servicios_txt[:180]}
+                            🤝 <b style="color: #0369a1;">Servicios:</b> {servicios_txt[:160]}
                         </div>
                         <div class="card-info">
-                            📍 <b>Dirección:</b> {ubicacion}<br>
-                            📞 <b>Tel:</b> {telefono}
+                            📍 <b style="color: #6b21a8;">Dirección:</b> {ubicacion}<br>
+                            📞 <b style="color: #6b21a8;">Teléfono:</b> {telefono}
                         </div>
                     </div>
                 """, unsafe_allow_html=True)
