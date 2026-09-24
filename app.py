@@ -77,7 +77,7 @@ st.markdown("""
         border-radius: 20px;
         box-shadow: 0 8px 20px rgba(0,0,0,0.06);
         margin-bottom: 20px;
-        height: 380px;
+        height: 420px; /* Aumentado ligeramente para dar espacio al texto más grande y los servicios */
         display: flex;
         flex-direction: column;
         transition: transform 0.3s ease;
@@ -99,18 +99,20 @@ st.markdown("""
     }
 
     .card-title {
-        font-size: 1.1rem;
+        font-size: 1.15rem;
         font-weight: 700;
         color: #1e293b;
         margin-bottom: 8px;
-        height: 50px;
+        height: 48px;
         line-height: 1.2;
         overflow: hidden;
     }
 
+    /* Modificado: letra más grande para Objeto/Descripción */
     .card-desc {
-        font-size: 0.85rem;
-        color: #64748b;
+        font-size: 0.98rem; /* Aumentado de 0.85rem a 0.98rem */
+        color: #334155;
+        line-height: 1.4;
         flex-grow: 1;
         overflow: hidden;
         margin-bottom: 12px;
@@ -120,9 +122,9 @@ st.markdown("""
     }
 
     .card-info {
-        font-size: 0.8rem;
+        font-size: 0.82rem;
         border-top: 1px solid #f1f5f9;
-        padding-top: 12px;
+        padding-top: 10px;
         color: #475569;
         line-height: 1.4;
     }
@@ -135,7 +137,7 @@ st.markdown("""
         padding: 10px;
         border-radius: 10px;
         text-decoration: none;
-        margin-top: 12px;
+        margin-top: 10px;
         font-weight: 600;
         font-size: 0.85rem;
     }
@@ -185,20 +187,15 @@ if not df.empty:
 
     st.divider()
 
-    # --- 6. FILTROS (CORREGIDO) ---
+    # --- 6. FILTROS ---
     st.markdown('<h2 class="section-title">Directorio Interactivo</h2>', unsafe_allow_html=True)
     c1, c2 = st.columns([2, 1])
     with c1:
         busqueda = st.text_input("🔍 Buscar por nombre o palabra clave...", placeholder="Ej: Salud, Mujer, Monterrey")
     with c2:
         if 'nombre' in df.columns:
-            # Extraer iniciales asegurando que sean cadenas válidas y sin NaNs
             df['letra'] = df['nombre'].dropna().astype(str).str[0].str.upper()
-            
-            # Obtener lista limpia de letras únicas
             letras_unicas = sorted([str(l) for l in df['letra'].dropna().unique() if str(l).strip() and str(l).lower() != 'nan'])
-            
-            # st.pills con lista limpia en formato de lista de Python
             letra_sel = st.pills("Inicial:", ["Todas"] + letras_unicas, default="Todas")
         else:
             letra_sel = "Todas"
@@ -210,7 +207,7 @@ if not df.empty:
     if 'letra' in df_f.columns and letra_sel != "Todas":
         df_f = df_f[df_f['letra'] == letra_sel]
 
-   # --- 7. LISTADO DE TARJETAS (COMPACTAS) ---
+    # --- 7. LISTADO DE TARJETAS (COMPACTAS) ---
     st.write(f"Mostrando **{len(df_f)}** resultados")
     
     for i in range(0, len(df_f), 3):
@@ -223,8 +220,9 @@ if not df.empty:
                 if web != "#" and not web.startswith('http') and web.lower() != 'nan': 
                     web = "https://" + web
                 
-                # Se usa 'objeto' (o 'servicios') en lugar de 'desc'
-                descripcion = str(row.get('objeto', row.get('servicios', 'Sin descripción.')))
+                # Mapeo de Objeto y Servicios desde las columnas del CSV
+                objeto_txt = str(row.get('objeto', row.get('desc', 'Sin descripción.')))
+                servicios_txt = str(row.get('servicios', 'No especificados'))
                 ubicacion = row.get('ubicación', row.get('ubicacion', 'N/A'))
                 telefono = row.get('tel', 'N/A')
                 
@@ -232,8 +230,11 @@ if not df.empty:
                     <div class="card-osc">
                         <div class="tag-premium">{row.get('tag', 'General')}</div>
                         <div class="card-title">{row.get('nombre', 'S/N')}</div>
-                        <div class="card-desc">{descripcion[:150]}...</div>
+                        <div class="card-desc">
+                            <b>Objeto:</b> {objeto_txt[:200]}
+                        </div>
                         <div class="card-info">
+                            🤝 <b>Servicios:</b> {servicios_txt[:80]}...<br>
                             📍 <b>Dirección:</b> {ubicacion}<br>
                             📞 <b>Tel:</b> {telefono}
                         </div>
