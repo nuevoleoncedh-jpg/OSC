@@ -77,7 +77,7 @@ st.markdown("""
         border-radius: 20px;
         box-shadow: 0 8px 20px rgba(0,0,0,0.06);
         margin-bottom: 20px;
-        height: 420px; /* Aumentado ligeramente para dar espacio al texto más grande y los servicios */
+        height: 460px; /* Ajustado para dar espacio al texto grande de objeto y servicios */
         display: flex;
         flex-direction: column;
         transition: transform 0.3s ease;
@@ -108,40 +108,39 @@ st.markdown("""
         overflow: hidden;
     }
 
-    /* Modificado: letra más grande para Objeto/Descripción */
+    /* Estilo para Objeto */
     .card-desc {
-        font-size: 0.98rem; /* Aumentado de 0.85rem a 0.98rem */
+        font-size: 0.98rem;
         color: #334155;
         line-height: 1.4;
-        flex-grow: 1;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
         overflow: hidden;
+    }
+
+    /* Estilo para Servicios (Mismo tamaño que Objeto) */
+    .card-services {
+        font-size: 0.98rem;
+        color: #334155;
+        line-height: 1.4;
         margin-bottom: 12px;
         display: -webkit-box;
-        -webkit-line-clamp: 4;
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .card-info {
-        font-size: 0.82rem;
+        font-size: 0.85rem;
         border-top: 1px solid #f1f5f9;
         padding-top: 10px;
         color: #475569;
         line-height: 1.4;
+        margin-top: auto;
     }
 
-    .btn-web {
-        display: block;
-        background: #10b981;
-        color: white !important;
-        text-align: center;
-        padding: 10px;
-        border-radius: 10px;
-        text-decoration: none;
-        margin-top: 10px;
-        font-weight: 600;
-        font-size: 0.85rem;
-    }
-    
     .section-title {
         font-weight: 700;
         color: #0f172a;
@@ -216,11 +215,6 @@ if not df.empty:
         
         for idx, row in enumerate(batch):
             with cols[idx]:
-                web = str(row.get('web', '#'))
-                if web != "#" and not web.startswith('http') and web.lower() != 'nan': 
-                    web = "https://" + web
-                
-                # Mapeo de Objeto y Servicios desde las columnas del CSV
                 objeto_txt = str(row.get('objeto', row.get('desc', 'Sin descripción.')))
                 servicios_txt = str(row.get('servicios', 'No especificados'))
                 ubicacion = row.get('ubicación', row.get('ubicacion', 'N/A'))
@@ -231,14 +225,15 @@ if not df.empty:
                         <div class="tag-premium">{row.get('tag', 'General')}</div>
                         <div class="card-title">{row.get('nombre', 'S/N')}</div>
                         <div class="card-desc">
-                            <b>Objeto:</b> {objeto_txt[:200]}
+                            <b>Objeto:</b> {objeto_txt[:180]}
+                        </div>
+                        <div class="card-services">
+                            🤝 <b>Servicios:</b> {servicios_txt[:180]}
                         </div>
                         <div class="card-info">
-                            🤝 <b>Servicios:</b> {servicios_txt[:80]}...<br>
                             📍 <b>Dirección:</b> {ubicacion}<br>
                             📞 <b>Tel:</b> {telefono}
                         </div>
-                        <a href="{web}" target="_blank" class="btn-web">Ver sitio web</a>
                     </div>
                 """, unsafe_allow_html=True)
 else:
