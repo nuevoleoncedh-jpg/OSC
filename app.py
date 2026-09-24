@@ -26,7 +26,7 @@ def cargar_datos():
 
 df = cargar_datos()
 
-# 3. Estilos CSS (Corregido: faltaba st.markdown al inicio)
+# 3. Estilos CSS
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
@@ -164,7 +164,7 @@ if not df.empty:
     
     total_osc = len(df)
     total_ejes = df['tag'].nunique() if 'tag' in df.columns else "N/A"
-    total_con_web = df[df['web'].notna() & (df['web'] != '#')].shape[0]
+    total_con_web = df[df['web'].notna() & (df['web'] != '#')].shape[0] if 'web' in df.columns else 0
 
     st.markdown(f"""
         <div class="kpi-container">
@@ -185,15 +185,21 @@ if not df.empty:
 
     st.divider()
 
-    # --- 6. FILTROS ---
+    # --- 6. FILTROS (CORREGIDO) ---
     st.markdown('<h2 class="section-title">Directorio Interactivo</h2>', unsafe_allow_html=True)
     c1, c2 = st.columns([2, 1])
     with c1:
         busqueda = st.text_input("🔍 Buscar por nombre o palabra clave...", placeholder="Ej: Salud, Mujer, Monterrey")
     with c2:
         if 'nombre' in df.columns:
-            df['letra'] = df['nombre'].astype(str).str[0].str.upper()
-            letra_sel = st.pills("Inicial:", ["Todas"] + sorted(df['letra'].unique().astype(str)), default="Todas")
+            # Extraer iniciales asegurando que sean cadenas válidas y sin NaNs
+            df['letra'] = df['nombre'].dropna().astype(str).str[0].str.upper()
+            
+            # Obtener lista limpia de letras únicas
+            letras_unicas = sorted([str(l) for l in df['letra'].dropna().unique() if str(l).strip() and str(l).lower() != 'nan'])
+            
+            # st.pills con lista limpia en formato de lista de Python
+            letra_sel = st.pills("Inicial:", ["Todas"] + letras_unicas, default="Todas")
         else:
             letra_sel = "Todas"
 
@@ -201,7 +207,7 @@ if not df.empty:
     df_f = df.copy()
     if busqueda:
         df_f = df_f[df_f.apply(lambda r: busqueda.lower() in str(r).lower(), axis=1)]
-    if letra_sel != "Todas":
+    if 'letra' in df_f.columns and letra_sel != "Todas":
         df_f = df_f[df_f['letra'] == letra_sel]
 
     # --- 7. LISTADO DE TARJETAS (COMPACTAS) ---
@@ -214,14 +220,14 @@ if not df.empty:
         for idx, row in enumerate(batch):
             with cols[idx]:
                 web = str(row.get('web', '#'))
-                if web != "#" and not web.startswith('http'): 
+                if web != "#" and not web.startswith('http') and web.lower() != 'nan': 
                     web = "https://" + web
                 
                 st.markdown(f"""
                     <div class="card-osc">
                         <div class="tag-premium">{row.get('tag', 'General')}</div>
                         <div class="card-title">{row.get('nombre', 'S/N')}</div>
-                        <div class="card-desc">{row.get('desc', 'Sin descripción.')[:150]}...</div>
+                        <div class="card-desc">{str(row.get('desc', 'Sin descripción.'))[:150]}...</div>
                         <div class="card-info">
                             📍 <b>Dirección:</b> {row.get('ubicacion', 'N/A')}<br>
                             📞 <b>Tel:</b> {row.get('tel', 'N/A')}
