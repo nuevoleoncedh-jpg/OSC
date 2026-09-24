@@ -210,7 +210,7 @@ if not df.empty:
     if 'letra' in df_f.columns and letra_sel != "Todas":
         df_f = df_f[df_f['letra'] == letra_sel]
 
-    # --- 7. LISTADO DE TARJETAS (COMPACTAS) ---
+   # --- 7. LISTADO DE TARJETAS (COMPACTAS) ---
     st.write(f"Mostrando **{len(df_f)}** resultados")
     
     for i in range(0, len(df_f), 3):
@@ -223,14 +223,19 @@ if not df.empty:
                 if web != "#" and not web.startswith('http') and web.lower() != 'nan': 
                     web = "https://" + web
                 
+                # Se usa 'objeto' (o 'servicios') en lugar de 'desc'
+                descripcion = str(row.get('objeto', row.get('servicios', 'Sin descripción.')))
+                ubicacion = row.get('ubicación', row.get('ubicacion', 'N/A'))
+                telefono = row.get('tel', 'N/A')
+                
                 st.markdown(f"""
                     <div class="card-osc">
                         <div class="tag-premium">{row.get('tag', 'General')}</div>
                         <div class="card-title">{row.get('nombre', 'S/N')}</div>
-                        <div class="card-desc">{str(row.get('desc', 'Sin descripción.'))[:150]}...</div>
+                        <div class="card-desc">{descripcion[:150]}...</div>
                         <div class="card-info">
-                            📍 <b>Dirección:</b> {row.get('ubicacion', 'N/A')}<br>
-                            📞 <b>Tel:</b> {row.get('tel', 'N/A')}
+                            📍 <b>Dirección:</b> {ubicacion}<br>
+                            📞 <b>Tel:</b> {telefono}
                         </div>
                         <a href="{web}" target="_blank" class="btn-web">Ver sitio web</a>
                     </div>
