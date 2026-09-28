@@ -1,242 +1,225 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-import os
 
-# 1. Configuración de página
-st.set_page_config(page_title="Directorio OSC | CEDHNL", layout="wide")
+# ---------------------------------------------------------
+# 1. CONFIGURACIÓN DE PÁGINA
+# ---------------------------------------------------------
+st.set_page_config(
+    page_title="Directorio OSC - CEDHNL",
+    page_icon="⚖️",
+    layout="wide"
+)
 
-# 2. Función de carga de datos
-def cargar_datos():
-    archivo = "directorio_osc.csv"
-    if not os.path.exists(archivo):
-        st.error(f"⚠️ No se encontró el archivo '{archivo}'")
-        return pd.DataFrame()
+# ---------------------------------------------------------
+# 2. ESTILOS CSS PERSONALIZADOS
+# ---------------------------------------------------------
+st.markdown("""
+    <style>
+    /* ENCABEZADO CON LOGO Y TÍTULO */
+    .cedh-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #003366;
+        margin-bottom: 25px;
+    }
+    .cedh-logo {
+        height: 75px;
+        width: auto;
+    }
+    .cedh-title-container {
+        display: flex;
+        flex-direction: column;
+    }
+    .cedh-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #003366;
+        margin: 0;
+        line-height: 1.2;
+    }
+    .cedh-subtitle {
+        font-size: 1.0rem;
+        color: #555555;
+        margin: 0;
+    }
+
+    /* ESTILO FIJO DE LAS FICHAS / CARDS */
+    .osc-card {
+        background-color: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        
+        /* ALTO FIJO UNIFORME PARA TODAS LAS FICHAS */
+        height: 340px;
+        
+        /* SCROLL EN CONTENIDO QUE SUPERE LA ALTURA */
+        overflow-y: auto;
+        
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
     
-    for enc in ['utf-8', 'latin-1', 'cp1252']:
-        for sep in [',', ';']:
-            try:
-                df = pd.read_csv(archivo, encoding=enc, sep=sep)
-                if len(df.columns) > 1:
-                    df.columns = df.columns.str.strip().str.lower()
-                    return df
-            except:
-                continue
-    return pd.DataFrame()
+    .osc-card:hover {
+        border-color: #003366;
+        box-shadow: 0 6px 12px -2px rgba(0, 51, 102, 0.15);
+    }
+
+    .osc-nombre {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 8px;
+        border-bottom: 1px solid #f3f4f6;
+        padding-bottom: 6px;
+    }
+
+    .osc-section-title {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #003366;
+        text-transform: uppercase;
+        margin-top: 6px;
+        margin-bottom: 2px;
+    }
+
+    .osc-text {
+        font-size: 0.85rem;
+        color: #374151;
+        line-height: 1.35;
+        margin-bottom: 6px;
+    }
+
+    .osc-tag {
+        display: inline-block;
+        background-color: #e0f2fe;
+        color: #0369a1;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-top: 8px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# ---------------------------------------------------------
+# 3. ENCABEZADO CON LOGO DE CEDHNL
+# ---------------------------------------------------------
+# Nota: Puedes usar la URL directa o la ruta a tu archivo local (ej. "assets/logo_cedhnl.png")
+LOGO_URL = "https://www.cedhnl.org.mx/assets/img/logo.png"
+
+st.markdown(f"""
+    <div class="cedh-header">
+        <img src="{LOGO_URL}" class="cedh-logo" alt="Logo CEDHNL">
+        <div class="cedh-title-container">
+            <h1 class="cedh-title">Comisión Estatal de Derechos Humanos de Nuevo León</h1>
+            <p class="cedh-subtitle">Directorio de Organizaciones de la Sociedad Civil (OSC)</p>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
+
+
+# ---------------------------------------------------------
+# 4. CARGA Y PROCESAMIENTO DE DATOS
+# ---------------------------------------------------------
+@st.cache_data
+def cargar_datos():
+    # Cargar archivo CSV / Excel del directorio de OSC
+    # Reemplaza 'directorio_osc.xlsx' o 'directorio_osc.csv' por tu ruta real
+    try:
+        df = pd.read_excel("directorio_osc.xlsx")
+    except Exception:
+        # Ejemplo de respaldo por si no encuentra el archivo local
+        df = pd.DataFrame([
+            {
+                "NOMBRE": "Academia Libre de Derechos Humanos, A.C.",
+                "OBJETO": "Divulgar el saber y el libre debate de las ideas sobre los Derechos Humanos como un pilar indiscutible en la lucha por la dignidad y la igualdad.",
+                "SERVICIOS": "Divulgación y enseñanza de los derechos humanos a través de medios electrónicos.",
+                "UBICACIÓN": "Calle Gral. Carlos Salazar Pte. 745, Centro, 64000 Monterrey, N.L.",
+                "TEL": "812927 0610",
+                "WEB": "aldh.edu.mx@gmail.com | https://aldh.mx",
+                "TAG": "Jóvenes / Educación"
+            },
+            {
+                "NOMBRE": "Acciona e Incluye, S.A.S de C.V.",
+                "OBJETO": "Realizar actividades de investigación y desarrollo en ciencias sociales y humanidades, apoyar con consultorías y brindar servicios de traducción e interpretación.",
+                "SERVICIOS": "Interpretación simultánea de Lengua de Señas Mexicana (LSM), talleres de sensibilización y plataformas educativas.",
+                "UBICACIÓN": "Miguel Ángel 451, Col. Misión Real, Apodaca, N.L.",
+                "TEL": "8110661698",
+                "WEB": "inclusionmonterrey@gmail.com",
+                "TAG": "Discapacidad / LSM"
+            },
+            {
+                "NOMBRE": "ACODEMIS, A.C.",
+                "OBJETO": "Luchar contra las prácticas de discriminación laboral, educativas, políticas de seguridad, asistencia jurídica y de salud de las minorías sexuales.",
+                "SERVICIOS": "Pruebas rápidas para detección de VIH, SÍFILIS y HEPATITIS C en sus centros comunitarios.",
+                "UBICACIÓN": "Washington 947 Ote. / Villagrán 637 Nte., Monterrey, N.L.",
+                "TEL": "8183450927",
+                "WEB": "acodemis@gmail.com | http://www.acodemis.org",
+                "TAG": "Salud / VIH"
+            }
+        ])
+    return df
 
 df = cargar_datos()
 
-# 3. Estilos CSS
-st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
-    html, body, [class*="css"] { font-family: 'Outfit', sans-serif !important; }
+# Búsqueda / Filtro opcional
+busqueda = st.text_input("🔍 Buscar por Nombre, Servicio o Clasificación:", "")
 
-    .header-premium {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        padding: 40px;
-        border-radius: 30px;
-        color: white;
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    /* --- ESTILO PARA KPIs --- */
-    .kpi-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        margin-bottom: 30px;
-    }
-    .kpi-card {
-        background: white;
-        padding: 20px;
-        border-radius: 20px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        flex: 1;
-        text-align: center;
-        border: 1px solid #f1f5f9;
-    }
-    .kpi-value {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #10b981;
-        line-height: 1;
-    }
-    .kpi-label {
-        font-size: 0.85rem;
-        color: #64748b;
-        font-weight: 600;
-        text-transform: uppercase;
-    }
-
-    /* --- ESTILO PARA TARJETAS --- */
-    .card-osc {
-        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-        padding: 22px;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.08);
-        margin-bottom: 20px;
-        /* Se remueve height fijo para permitir que la tarjeta crezca según el texto */
-        display: flex;
-        flex-direction: column;
-        transition: all 0.3s ease;
-        border: 1px solid #e2e8f0;
-        border-left: 6px solid #10b981;
-    }
-    .card-osc:hover { 
-        transform: translateY(-6px); 
-        box-shadow: 0 15px 30px rgba(16, 185, 129, 0.15);
-        border-color: #cbd5e1;
-        border-left-color: #059669;
-    }
-
-    .tag-premium {
-        background-color: #d1fae5;
-        color: #047857;
-        padding: 5px 12px;
-        border-radius: 100px;
-        font-weight: 700;
-        font-size: 11px;
-        text-transform: uppercase;
-        border: 1px solid #a7f3d0;
-        margin-bottom: 10px;
-        width: fit-content;
-    }
-
-    .card-title {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin-bottom: 10px;
-        line-height: 1.2;
-    }
-
-    /* Estilo para Objeto */
-    .card-desc {
-        font-size: 0.98rem;
-        color: #1e293b;
-        line-height: 1.45;
-        margin-bottom: 8px;
-        background-color: #f0fdf4;
-        padding: 8px 12px;
-        border-radius: 10px;
-        border-left: 3px solid #34d399;
-    }
-
-    /* Estilo para Servicios */
-    .card-services {
-        font-size: 0.98rem;
-        color: #1e293b;
-        line-height: 1.45;
-        margin-bottom: 10px;
-        background-color: #f0f9ff;
-        padding: 8px 12px;
-        border-radius: 10px;
-        border-left: 3px solid #38bdf8;
-    }
-
-    /* Estilo para Dirección y Teléfono */
-    .card-info {
-        font-size: 0.98rem;
-        color: #1e293b;
-        line-height: 1.45;
-        background-color: #faf5ff;
-        padding: 8px 12px;
-        border-radius: 10px;
-        border-left: 3px solid #a855f7;
-        margin-top: auto;
-    }
-
-    .section-title {
-        font-weight: 700;
-        color: #0f172a;
-        margin: 20px 0;
-        border-left: 5px solid #10b981;
-        padding-left: 15px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# 4. Header
-st.markdown("""
-    <div class="header-premium">
-        <h1 style="margin:0; font-size: 3rem;">CEDHNL</h1>
-        <p style="margin:10px 0 0 0; opacity:0.9;">Directorio de Organizaciones de la Sociedad Civil</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-if not df.empty:
-    # --- 5. DASHBOARD ---
-    st.markdown('<h2 class="section-title">Análisis de la Red de Apoyo</h2>', unsafe_allow_html=True)
-    
-    total_osc = len(df)
-    total_ejes = df['tag'].nunique() if 'tag' in df.columns else "N/A"
-
-    st.markdown(f"""
-        <div class="kpi-container">
-            <div class="kpi-card">
-                <div class="kpi-value">{total_osc}</div>
-                <div class="kpi-label">Organizaciones<br>Registradas</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-value">{total_ejes}</div>
-                <div class="kpi-label">Ejes de<br>Atención</div>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-    st.divider()
-
-    # --- 6. FILTROS ---
-    st.markdown('<h2 class="section-title">Directorio Interactivo</h2>', unsafe_allow_html=True)
-    c1, c2 = st.columns([2, 1])
-    with c1:
-        busqueda = st.text_input("🔍 Buscar por nombre o palabra clave...", placeholder="Ej: Salud, Mujer, Monterrey")
-    with c2:
-        if 'nombre' in df.columns:
-            df['letra'] = df['nombre'].dropna().astype(str).str[0].str.upper()
-            letras_unicas = sorted([str(l) for l in df['letra'].dropna().unique() if str(l).strip() and str(l).lower() != 'nan'])
-            letra_sel = st.pills("Inicial:", ["Todas"] + letras_unicas, default="Todas")
-        else:
-            letra_sel = "Todas"
-
-    # Aplicar Filtros
-    df_f = df.copy()
-    if busqueda:
-        df_f = df_f[df_f.apply(lambda r: busqueda.lower() in str(r).lower(), axis=1)]
-    if 'letra' in df_f.columns and letra_sel != "Todas":
-        df_f = df_f[df_f['letra'] == letra_sel]
-
-    # --- 7. LISTADO DE TARJETAS ---
-    st.write(f"Mostrando **{len(df_f)}** resultados")
-    
-    for i in range(0, len(df_f), 3):
-        cols = st.columns(3)
-        batch = df_f.iloc[i:i+3].to_dict('records')
-        
-        for idx, row in enumerate(batch):
-            with cols[idx]:
-                objeto_txt = str(row.get('objeto', row.get('desc', 'Sin descripción.')))
-                servicios_txt = str(row.get('servicios', 'No especificados'))
-                ubicacion = row.get('ubicación', row.get('ubicacion', 'N/A'))
-                telefono = row.get('tel', 'N/A')
-                
-                st.markdown(f"""
-                    <div class="card-osc">
-                        <div class="tag-premium">{row.get('tag', 'General')}</div>
-                        <div class="card-title">{row.get('nombre', 'S/N')}</div>
-                        <div class="card-desc">
-                            🎯 <b style="color: #0f766e;">Objeto:</b> {objeto_txt}
-                        </div>
-                        <div class="card-services">
-                            🤝 <b style="color: #0369a1;">Servicios:</b> {servicios_txt}
-                        </div>
-                        <div class="card-info">
-                            📍 <b style="color: #6b21a8;">Dirección:</b> {ubicacion}<br>
-                            📞 <b style="color: #6b21a8;">Teléfono:</b> {telefono}
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
+if busqueda:
+    df_filtrado = df[
+        df['NOMBRE'].str.contains(busqueda, case=False, na=False) |
+        df['SERVICIOS'].str.contains(busqueda, case=False, na=False) |
+        df['TAG'].str.contains(busqueda, case=False, na=False)
+    ]
 else:
-    st.error("No se pudo cargar el listado. Verifica el archivo CSV.")
+    df_filtrado = df
+
+
+# ---------------------------------------------------------
+# 5. RENDERIZADO DE FICHAS UNIFORMES (3 COLUMNAS)
+# ---------------------------------------------------------
+cols_per_row = 3
+cols = st.columns(cols_per_row)
+
+for idx, (_, row) in enumerate(df_filtrado.iterrows()):
+    col = cols[idx % cols_per_row]
+    
+    # Preparación de valores seguros
+    nombre = row.get("NOMBRE", "Sin nombre")
+    objeto = row.get("OBJETO", "No especificado")
+    servicios = row.get("SERVICIOS", "No especificado")
+    ubicacion = row.get("UBICACIÓN", "No disponible")
+    telefono = row.get("TEL", "Sin teléfono")
+    web_correo = row.get("WEB", "Sin contacto")
+    tag = row.get("TAG", "General")
+
+    with col:
+        # Estructura estandarizada idéntica para todas las fichas
+        st.markdown(f"""
+            <div class="osc-card">
+                <div>
+                    <div class="osc-nombre">{nombre}</div>
+                    
+                    <div class="osc-section-title">Objeto Social</div>
+                    <div class="osc-text">{objeto}</div>
+                    
+                    <div class="osc-section-title">Servicios</div>
+                    <div class="osc-text">{servicios}</div>
+                    
+                    <div class="osc-section-title">Ubicación y Contacto</div>
+                    <div class="osc-text">📍 {ubicacion}</div>
+                    <div class="osc-text">📞 {telefono} | ✉️ {web_correo}</div>
+                </div>
+                
+                <div>
+                    <span class="osc-tag">🏷️ {tag}</span>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
