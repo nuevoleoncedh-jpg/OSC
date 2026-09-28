@@ -26,7 +26,7 @@ def cargar_datos():
 
 df = cargar_datos()
 
-# 3. Estilos CSS (Actualizados con dirección y teléfono más grandes)
+# 3. Estilos CSS
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
@@ -77,7 +77,7 @@ st.markdown("""
         border-radius: 20px;
         box-shadow: 0 10px 25px rgba(16, 185, 129, 0.08);
         margin-bottom: 20px;
-        height: 500px; /* Ajustado para dar espacio al texto más grande */
+        height: 500px;
         display: flex;
         flex-direction: column;
         transition: all 0.3s ease;
@@ -146,9 +146,9 @@ st.markdown("""
         overflow: hidden;
     }
 
-    /* Estilo para Dirección y Teléfono (Mismo tamaño de fuente) */
+    /* Estilo para Dirección y Teléfono */
     .card-info {
-        font-size: 0.98rem; /* Aumentado a 0.98rem */
+        font-size: 0.98rem;
         color: #1e293b;
         line-height: 1.45;
         background-color: #faf5ff;
@@ -182,7 +182,6 @@ if not df.empty:
     
     total_osc = len(df)
     total_ejes = df['tag'].nunique() if 'tag' in df.columns else "N/A"
-    total_con_web = df[df['web'].notna() & (df['web'] != '#')].shape[0] if 'web' in df.columns else 0
 
     st.markdown(f"""
         <div class="kpi-container">
@@ -193,10 +192,6 @@ if not df.empty:
             <div class="kpi-card">
                 <div class="kpi-value">{total_ejes}</div>
                 <div class="kpi-label">Ejes de<br>Atención</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-value">{total_con_web}</div>
-                <div class="kpi-label">Con Enlace<br>Digital</div>
             </div>
         </div>
     """, unsafe_allow_html=True)
