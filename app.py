@@ -77,7 +77,7 @@ st.markdown("""
         border-radius: 20px;
         box-shadow: 0 10px 25px rgba(16, 185, 129, 0.08);
         margin-bottom: 20px;
-        height: 500px;
+        /* Se remueve height fijo para permitir que la tarjeta crezca según el texto */
         display: flex;
         flex-direction: column;
         transition: all 0.3s ease;
@@ -109,9 +109,7 @@ st.markdown("""
         font-weight: 700;
         color: #0f172a;
         margin-bottom: 10px;
-        height: 48px;
         line-height: 1.2;
-        overflow: hidden;
     }
 
     /* Estilo para Objeto */
@@ -124,10 +122,6 @@ st.markdown("""
         padding: 8px 12px;
         border-radius: 10px;
         border-left: 3px solid #34d399;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
     }
 
     /* Estilo para Servicios */
@@ -140,10 +134,6 @@ st.markdown("""
         padding: 8px 12px;
         border-radius: 10px;
         border-left: 3px solid #38bdf8;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
     }
 
     /* Estilo para Dirección y Teléfono */
@@ -237,10 +227,10 @@ if not df.empty:
                         <div class="tag-premium">{row.get('tag', 'General')}</div>
                         <div class="card-title">{row.get('nombre', 'S/N')}</div>
                         <div class="card-desc">
-                            🎯 <b style="color: #0f766e;">Objeto:</b> {objeto_txt[:160]}
+                            🎯 <b style="color: #0f766e;">Objeto:</b> {objeto_txt}
                         </div>
                         <div class="card-services">
-                            🤝 <b style="color: #0369a1;">Servicios:</b> {servicios_txt[:160]}
+                            🤝 <b style="color: #0369a1;">Servicios:</b> {servicios_txt}
                         </div>
                         <div class="card-info">
                             📍 <b style="color: #6b21a8;">Dirección:</b> {ubicacion}<br>
